@@ -24,4 +24,4 @@ class JIRAUtilities:
         return None
 
     def update_one_issue(self, issue_key, transition):
-        return
+        return None
