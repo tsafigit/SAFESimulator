@@ -1,11 +1,13 @@
 class UserStory:
 
-    def __init__(self, key, completion_time):
-        self.key = key
+    def __init__(self, name, epic=None):
+        self.name = name
+        self.epic = epic
+        self.key = None
         self.status = 'ToDo'
         self.assignee = ''
-        self.time_left = completion_time
-        self._completion_time = completion_time
+        self.time_left = None
+        self._completion_time = None
         self._done_in_parallel = False
 
     def set_completion_time(self, completion_time):

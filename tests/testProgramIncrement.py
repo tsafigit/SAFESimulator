@@ -4,21 +4,35 @@ from Simulator.ProgramIncrement import ProgramIncrement
 
 import sys
 
+class JIRAUtilsStub:
+    def create_list_of_epics(self, list_of_epics):
+        for epic in list_of_epics:
+            epic.key = epic.name
+
+    def create_list_of_user_stories(self, list_of_user_stories):
+        for user_story in list_of_user_stories:
+            user_story.key = user_story.name
+
+    def add_issues_from_backlog_to_sprint(self, board_id, user_stories_keys):
+        return None
+
+
 class TestProgramIncrement(unittest.TestCase):
     sprint_params = {
         "Sprint1": {
             "sprint_id": 1,
-            "sprint_size": 7
+            "sprint_size": 5
         },
         "Sprint2": {
             "sprint_id": 2,
-            "sprint_size": 7
+            "sprint_size": 5
         }
     }
 
     small_train_params = {
         "Team1": {
-            "epic_board_id": 1,
+            "num_epics_per_PI" : 5,
+            "num_stories_per_epic" : 10,
             "user_stories_board_id": 2,
             "story_cycle_time": 3,
             "avg_velocity_num_of_stories": 20,
@@ -30,7 +44,8 @@ class TestProgramIncrement(unittest.TestCase):
 
     train_params = {
         "Team1": {
-            "epic_board_id": 1,
+            "num_epics_per_PI" : 5,
+            "num_stories_per_epic" : 10,
             "user_stories_board_id": 2,
             "story_cycle_time": 3,
             "avg_velocity_num_of_stories": 15,
@@ -39,7 +54,8 @@ class TestProgramIncrement(unittest.TestCase):
             "team_members": ["Person1A", "Person1B", "Person1C"]
         },
         "Team2": {
-            "epic_board_id": 4,
+            "num_epics_per_PI" : 5,
+            "num_stories_per_epic" : 10,
             "user_stories_board_id": 5,
             "story_cycle_time": 3,
             "avg_velocity_num_of_stories": 20,
@@ -48,7 +64,8 @@ class TestProgramIncrement(unittest.TestCase):
             "team_members": ["Person2A", "Person2B", "Person2C", "Person2D", "Person2E"]
         },
         "Team3": {
-            "epic_board_id": 7,
+            "num_epics_per_PI" : 5,
+            "num_stories_per_epic" : 10,
             "user_stories_board_id": 8,
             "story_cycle_time": 3,
             "avg_velocity_num_of_stories": 10,
@@ -103,15 +120,16 @@ class TestProgramIncrement(unittest.TestCase):
         sys.stdout = self.stdoutcopy
 
     def test_PI(self):
-        one_pi = ProgramIncrement(self.train_params, self.sprint_params)
+        jira_utils_stub = JIRAUtilsStub()
 
-        jira_inst = Mock()
+        one_pi = ProgramIncrement(self.train_params, self.sprint_params, jira_utils_stub)
+
         #one_pi.run(jira_inst)
-        one_pi.train.initialize_from_jira(jira_inst)
+        one_pi.train.initialize_backlogs()
 
         for sprint in one_pi.sprints:
             print('\n\n\nSprint %s' % sprint.sprint_name)
-            sprint.run_one_sprint(jira_inst)
+            sprint.run_one_sprint()
             self.summarize_sprint(sprint)
 
         # update jira

@@ -19,10 +19,10 @@ class Sprint:
             print("\nDay %d Team %s" % (day, team_sprint.team.name))
             team_sprint.run_one_day(day)
 
-    def run_one_sprint(self, jira_inst):
+    def run_one_sprint(self):
         print('\nSet up Sprint backlog for each team')
         for team_sprint in self.team_sprints:
-            team_sprint.set_up_sprint(jira_inst)
+            team_sprint.set_up_sprint()
 
         print('\nStarting the work')
         for day_index in range(self.sprint_size):
@@ -33,6 +33,6 @@ class Sprint:
         for team_sprint in self.team_sprints:
            team_sprint.cleanup_sprint()
 
-    def update_one_day_transitions_in_jira(self, jira_inst, day):
+    def update_one_day_transitions_in_jira(self, day):
         for team_sprint in self.team_sprints:
-            team_sprint.update_one_day_transitions_in_jira(jira_inst, day)
+            team_sprint.update_one_day_transitions_in_jira(day)

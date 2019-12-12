@@ -11,6 +11,7 @@ from Simulator.TransitionTable import TransitionTable
 
 class TestPerson(unittest.TestCase):
     _day = 1
+    _name = 'story1'
     _key = 'key1'
     _completion_time = 3
 
@@ -27,7 +28,11 @@ class TestPerson(unittest.TestCase):
         random.randrange.side_effect = [0, 1, 0]
 
         self.backlog_mock = Mock()
-        self.backlog_mock.pick_top_issue.return_value = UserStory(self._key, self._completion_time)
+
+        user_story = UserStory(self._name)
+        user_story.key = self._key
+        user_story.set_completion_time(self._completion_time)
+        self.backlog_mock.pick_top_issue.return_value = user_story
 
     def tearDown(self) -> None:
         random.randrange = self.randrange_orig
@@ -74,10 +79,14 @@ class TestPerson(unittest.TestCase):
         # Only key1, starts with 3 days, becomes 2 days
         self.person.pick_story_for_today_and_work(self._day, self.backlog_mock, transition_table_mock)
 
-        # Story key2 is added
-        # key1 time_left increases from 2 to 3, then it is worked on, so time_left becomes 2
-        # key2 increases from 3 to 4 and stays like that
-        self.backlog_mock.pick_top_issue.return_value = UserStory('key2', self._completion_time)
+        # Story story2 is added
+        # story1 time_left increases from 2 to 3, then it is worked on, so time_left becomes 2
+        # story2 increases from 3 to 4 and stays like that
+        user_story = UserStory('story2')
+        user_story.key = 'key2'
+        user_story.set_completion_time(self._completion_time)
+        self.backlog_mock.pick_top_issue.return_value = user_story
+
         self.person.pick_story_for_today_and_work(self._day, self.backlog_mock, transition_table_mock)
 
         self.assertEqual(self.person.stories_in_progress[0].time_left, self._completion_time - 1)

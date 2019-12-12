@@ -16,18 +16,18 @@ class TestBacklog(unittest.TestCase):
         self.assertEqual(len(self.backlog.list_of_issues), 1)
 
     def test_pop_from_list_of_stories(self):
-        story = UserStory('key1', 3)
+        story = UserStory('story1')
         self.backlog.add_issue(story)
-        self.assertEqual(self.backlog.pick_top_issue().key, 'key1')
+        self.assertEqual(self.backlog.pick_top_issue().name, 'story1')
         self.assertEqual(len(self.backlog.list_of_issues), 0)
 
     def test_pop_top_item_from_list_of_stories(self):
-        story1 = UserStory('key1', 3)
-        story2 = UserStory('key2', 3)
+        story1 = UserStory('story1')
+        story2 = UserStory('story2')
         self.backlog.add_issue(story1)
         self.backlog.add_issue(story2)
 
-        self.assertEqual(self.backlog.pick_top_issue().key, 'key1')
+        self.assertEqual(self.backlog.pick_top_issue().name, 'story1')
 
 if __name__ == '__main__':
     unittest.main()

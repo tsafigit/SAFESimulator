@@ -1,19 +1,19 @@
 from Simulator.JIRAUtilities import JIRAUtilities
-from Simulator.Epic import Epic
-from Simulator.UserStory import UserStory
 from Simulator.Person import Person
-from Simulator.Backlog import Backlog
+from Simulator.BacklogGenerator import BacklogGenerator
 
 
 class Team:
-    def __init__(self, name, params):
+    def __init__(self, name, params, jira_utils):
         self.name = name
-        self.epic_board_id = params["epic_board_id"]
+        self.num_epics_per_PI = params["num_epics_per_PI"]
+        self.num_stories_per_epic = params["num_stories_per_epic"]
         self.user_stories_board_id = params["user_stories_board_id"]
         self.story_cycle_time = params["story_cycle_time"]
         self.avg_velocity_num_of_stories = params["avg_velocity_num_of_stories"]
         self.wip_limit = params["wip_limit"]
         self.prob_for_taking_stories_when_busy = params["prob_for_taking_stories_when_busy"]
+
 
         self.team_members = []
         for person_name in params["team_members"]:
@@ -21,26 +21,20 @@ class Team:
             self.team_members.append(person)
 
         # The team is the owner of the backlogs
-        self.epic_backlog = Backlog()
-        self.user_story_backlog = Backlog()
+        self.epic_backlog = None
+        self.user_story_backlog = None
 
-        self.jira_utils = JIRAUtilities()
+        self.jira_utils = jira_utils
 
-    def _init_epic_backlog(self, jira_inst):
-        list_of_epics = self.jira_utils.read_epics_backlog(jira_inst, self.epic_board_id)
-        for e in list_of_epics:
-            epic = Epic(e)
-            self.epic_backlog.add_issue(epic)
+    def initialize_backlog(self):
+        backlog_generator = BacklogGenerator(self.name) #prefix for issue names
+        backlog_generator.generate_hierarchy(self.num_epics_per_PI, self.num_stories_per_epic)
 
-    def _init_user_stories_backlog(self, jira_inst):
-        list_of_user_stories = self.jira_utils.read_stories_backlog(jira_inst, self.user_stories_board_id)
-        for u in list_of_user_stories:
-            story = UserStory(u, self.story_cycle_time)
-            self.user_story_backlog.add_issue(story)
+        self.epic_backlog = backlog_generator.epic_backlog
+        self.user_story_backlog = backlog_generator.user_story_backlog
 
-    def initialize_from_jira(self, jira_inst):
-        self._init_epic_backlog(jira_inst)
-        self._init_user_stories_backlog(jira_inst)
+        self.jira_utils.create_list_of_epics(self.epic_backlog.list_of_issues)
+        self.jira_utils.create_list_of_user_stories(self.user_story_backlog.list_of_issues)
 
     def reset_done(self):
         for p in self.team_members:

@@ -33,6 +33,24 @@ class TestJIRAUtilities(unittest.TestCase):
         self.assertEqual(sprint.startDate, start_date_str)
         self.assertEqual(sprint.endDate, end_date_str)
 
+    def test_create_epic(self):
+        epic = self.jira_utils.create_epic('Test Epic 1')
+        self.assertEqual(epic.fields.summary, 'Test Epic 1')
+        self.assertEqual(epic.fields.issuetype.name, 'Epic')
+
+    def test_create_user_story_without_epic(self):
+        story = self.jira_utils.create_user_story_with_epic('Test Story')
+        self.assertEqual(story.fields.summary, 'Test Story')
+        self.assertEqual(story.fields.issuetype.name, 'Story')
+
+    def test_create_user_story_with_epic(self):
+        epic = self.jira_utils.create_epic('Test Epic 2')
+
+        story = self.jira_utils.create_user_story_with_epic('Test Story E', epic.key)
+
+        # 10118 is the Epic Link
+        self.assertEqual(story.fields.customfield_10118, epic.key)
+
 
 if __name__ == '__main__':
     unittest.main()

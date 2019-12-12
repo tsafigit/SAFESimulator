@@ -4,11 +4,11 @@ from Simulator.Epic import Epic
 
 class TestEpic(unittest.TestCase):
 
-    _key = 'e1'
+    _name = 'e1'
     _num_of_stories = 5
 
     def setUp(self) -> None:
-        self.epic = Epic(self._key)
+        self.epic = Epic(self._name)
 
         self.list_of_stories = []
         for i in range(self._num_of_stories):
@@ -17,7 +17,8 @@ class TestEpic(unittest.TestCase):
             self.list_of_stories.append(story)
 
     def test_epic_creation(self):
-        self.assertEqual(self.epic.key, self._key)
+        self.assertEqual(self.epic.name, self._name)
+        self.assertEqual(self.epic.key, None)
         self.assertEqual(self.epic.status, 'ToDo')
         self.assertEqual(len(self.epic.list_of_stories), 0)
 

@@ -5,11 +5,14 @@ from Simulator.UserStory import UserStory
 
 
 class TestUserStory(unittest.TestCase):
+    _name = 'story1'
     _key = 'SP-1'
     _completion_time = 3
 
     def setUp(self) -> None:
-        self.us = UserStory(self._key, self._completion_time)
+        self.us = UserStory(self._name)
+        self.us.set_completion_time(self._completion_time)
+        self.us.key = self._key
 
         self.transition_table_mock = Mock()
 
@@ -18,10 +21,21 @@ class TestUserStory(unittest.TestCase):
             self.us.work_one_day()
 
     def test_user_story_creation(self):
-        self.assertEqual(self.us.key, self._key)
-        self.assertEqual(self.us.status, 'ToDo')
-        self.assertEqual(self.us.assignee, '')
-        self.assertEqual(self.us.time_left, 3)
+        user_story = UserStory(self._name)
+        self.assertEqual(user_story.name, self._name)
+        self.assertEqual(user_story.epic, None)
+        self.assertEqual(user_story.key, None)
+        self.assertEqual(user_story.status, 'ToDo')
+        self.assertEqual(user_story.assignee, '')
+        self.assertEqual(user_story.time_left, None)
+        self.assertEqual(user_story._completion_time, None)
+        self.assertEqual(user_story._done_in_parallel, False)
+
+    def test_user_story_creation_whith_epic(self):
+        epic = Mock()
+        user_story = UserStory(self._name, epic)
+
+        self.assertEqual(user_story.epic, epic)
 
     def test_does_not_become_done_on_creation(self):
         self.assertFalse(self.us.just_became_done())

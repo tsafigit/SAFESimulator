@@ -3,6 +3,20 @@ from datetime import timedelta
 
 
 class JIRAUtilities:
+    user_story_dict = {
+        'project': 'SP',
+        'issuetype': 'Story',
+        'summary': "Story 302"
+    }
+
+    # 10120 is the 'Epic Name' and it's a must have
+    epic_dict = {
+        'project': 'SP',
+        'issuetype': 'Epic',
+        'summary': "Epic 1",
+        'customfield_10120': "Epic 1"
+    }
+
     def __init__(self, instance_type):
         if instance_type == 'cloud':
             self.jira_inst = JIRA(basic_auth=('nela.g@dr-agile.com', 'FiJBeI3H81sceRofBcY4E84E'),
@@ -14,6 +28,36 @@ class JIRAUtilities:
         del self.jira_inst
 
     # Creation
+    def create_epic(self, name):
+        dict = self.epic_dict
+        dict['summary'] = name
+        dict['customfield_10120'] = name
+
+        epic = self.jira_inst.create_issue(fields=dict)
+        return epic
+
+    def create_user_story_with_epic(self, user_story_name, epic_key=None):
+        dict = self.user_story_dict
+        dict['summary'] = user_story_name
+
+        user_story = self.jira_inst.create_issue(fields=dict)
+
+        if epic_key:
+            self.jira_inst.add_issues_to_epic(epic_key, [user_story.key])
+
+        user_story = self.jira_inst.issue(user_story.id)
+        return user_story
+
+    def create_list_of_epics(self, list_of_epics):
+        for epic in list_of_epics:
+            jira_epic = self.create_epic(epic.name)
+            epic.key = jira_epic.key
+
+    def create_list_of_user_stories(self, list_of_user_stories):
+        for user_story in list_of_user_stories:
+            jira_user_story = self.create_user_story_with_epic(user_story.name, user_story.epic.key)
+            user_story.key = jira_user_story.key
+
 
     # Create Sprint
     # Best would be to provide a board_id of a board that contains all issues
@@ -37,27 +81,7 @@ class JIRAUtilities:
         print("Please start the sprint manually on a global board")
         key = input()
 
-    # Update transitions
-    def read_epics_backlog(self, jira_inst, board_id):
-        if board_id == 1:
-            return ['epic1_1', 'epic1_2', 'epic1_3']
-        elif board_id == 4:
-            return ['epic2_1', 'epic2_2', 'epic2_3']
-        elif board_id == 7:
-            return ['epic3_1', 'epic3_2', 'epic3_3']
-
-        return []
-
-    def read_stories_backlog(self, jira_inst, board_id):
-        stories_list = []
-        team_index = int(board_id / 3) + 1
-        for i in range(50):
-            story_key = "story" + str(team_index) + "_" + str(i+1)
-            stories_list.append(story_key)
-
-        return stories_list
-
-    def add_issues_from_backlog_to_sprint(self, jira_inst, board_id, user_stories_keys):
+    def add_issues_from_backlog_to_sprint(self, board_id, user_stories_keys):
         return None
 
     def update_one_issue(self, issue_key, transition):

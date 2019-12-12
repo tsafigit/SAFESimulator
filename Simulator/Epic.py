@@ -1,6 +1,7 @@
 class Epic:
-    def __init__(self, key):
-        self.key = key
+    def __init__(self, name):
+        self.name = name
+        self.key = None
         self.status = 'ToDo'
         self.list_of_stories = []
 

@@ -1,8 +1,6 @@
 import random
 from Simulator.TransitionTable import TransitionTable
-from Simulator.UserStory import UserStory
 from Simulator.Backlog import Backlog
-from Simulator.JIRAUtilities import JIRAUtilities
 
 
 class TeamSprint:
@@ -14,13 +12,12 @@ class TeamSprint:
         self.sprint_id = sprint_params["sprint_id"]
         self.sprint_size = sprint_params["sprint_size"]
         self.team = team
+        self.jira_utils = team.jira_utils
 
         # Contains UserStories
         self.curr_sprint_backlog = []
         self.curr_sprint_all_content_keys = []
         self.transition_table = None
-
-        self.jira_utils = JIRAUtilities()
 
 
     def _value_with_random_deviation(self, value, max_change_percent):
@@ -75,7 +72,7 @@ class TeamSprint:
         print('Entire sprint content')
         print(self.curr_sprint_all_content_keys)
 
-    def set_up_sprint(self, jira_inst):
+    def set_up_sprint(self):
         print('\nTeam %s' % self.team.name)
 
         #planned_velocity = self._value_with_random_deviation(self.team.avg_velocity_num_of_stories, self._velocity_max_change_percent)
@@ -84,7 +81,7 @@ class TeamSprint:
         self._populate_current_sprint_backlog(planned_velocity)
 
         # For now, velocity is in the number of stories
-        self.jira_utils.add_issues_from_backlog_to_sprint(jira_inst, self.team.user_stories_board_id, self.curr_sprint_all_content_keys)
+        self.jira_utils.add_issues_from_backlog_to_sprint(self.team.user_stories_board_id, self.curr_sprint_all_content_keys)
 
         self.transition_table = TransitionTable(self.sprint_size, self.curr_sprint_all_content_keys)
 
@@ -111,9 +108,9 @@ class TeamSprint:
         for p in self.team.team_members:
             p.pick_story_for_today_and_work(day, self.curr_sprint_backlog, self.transition_table)
 
-    def run_one_sprint(self, jira_inst):
+    def run_one_sprint(self):
         print("Team %s" % self.team.name)
-        self.set_up_sprint(jira_inst)
+        self.set_up_sprint()
 
         for day in range(self.sprint_size):
             print('Day %d' % (day + 1))
@@ -121,7 +118,7 @@ class TeamSprint:
 
         self.cleanup_sprint()
 
-    def update_one_day_transitions_in_jira(self, jira_inst, day):
+    def update_one_day_transitions_in_jira(self, day):
         curr_day = self.transition_table.transitions[day - 1]
         for idx, transition in enumerate(curr_day):
             if transition != 0:
