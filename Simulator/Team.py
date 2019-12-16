@@ -34,7 +34,7 @@ class Team:
         self.user_story_backlog = backlog_generator.user_story_backlog
 
         self.jira_utils.create_list_of_epics(self.epic_backlog.list_of_issues)
-        self.jira_utils.create_list_of_user_stories(self.user_story_backlog.list_of_issues)
+        self.jira_utils.create_list_of_user_stories(self.user_story_backlog.list_of_issues, self)
 
     def reset_done(self):
         for p in self.team_members:

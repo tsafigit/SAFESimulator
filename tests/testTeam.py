@@ -18,7 +18,7 @@ class TestTeam(unittest.TestCase):
     def setUp(self) -> None:
         self.jira_utils = Mock()
 
-        self.team = Team("Team1", self._team_params, self.jira_utils)
+        self.team = Team("Dev Team 1", self._team_params, self.jira_utils)
 
     def test_backlog_params(self):
         self.assertEqual(self.team.num_epics_per_PI, self._team_params["num_epics_per_PI"])
@@ -37,7 +37,7 @@ class TestTeam(unittest.TestCase):
 
     def test_empty_members_list(self):
         self._team_params["team_members"] = []
-        self.team = Team("Team1", self._team_params, self.jira_utils)
+        self.team = Team("Dev Team 1", self._team_params, self.jira_utils)
         self.assertEqual(len(self.team.team_members), 0)
 
 if __name__ == '__main__':

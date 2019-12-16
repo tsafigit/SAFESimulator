@@ -9,11 +9,11 @@ class JIRAUtilsStub:
         for epic in list_of_epics:
             epic.key = epic.name
 
-    def create_list_of_user_stories(self, list_of_user_stories):
+    def create_list_of_user_stories(self, list_of_user_stories, team):
         for user_story in list_of_user_stories:
             user_story.key = user_story.name
 
-    def add_issues_from_backlog_to_sprint(self, board_id, user_stories_keys):
+    def add_issues_to_sprint(self, sprint_id, user_stories_keys):
         return None
 
 
@@ -30,7 +30,7 @@ class TestProgramIncrement(unittest.TestCase):
     }
 
     small_train_params = {
-        "Team1": {
+        "Dev Team 1": {
             "num_epics_per_PI" : 5,
             "num_stories_per_epic" : 10,
             "user_stories_board_id": 2,
@@ -43,7 +43,7 @@ class TestProgramIncrement(unittest.TestCase):
     }
 
     train_params = {
-        "Team1": {
+        "Dev Team 1": {
             "num_epics_per_PI" : 5,
             "num_stories_per_epic" : 10,
             "user_stories_board_id": 2,
@@ -53,7 +53,7 @@ class TestProgramIncrement(unittest.TestCase):
             "prob_for_taking_stories_when_busy": 0.5,
             "team_members": ["Person1A", "Person1B", "Person1C"]
         },
-        "Team2": {
+        "Dev Team 2": {
             "num_epics_per_PI" : 5,
             "num_stories_per_epic" : 10,
             "user_stories_board_id": 5,
@@ -63,7 +63,7 @@ class TestProgramIncrement(unittest.TestCase):
             "prob_for_taking_stories_when_busy": 0.5,
             "team_members": ["Person2A", "Person2B", "Person2C", "Person2D", "Person2E"]
         },
-        "Team3": {
+        "Dev Team 3": {
             "num_epics_per_PI" : 5,
             "num_stories_per_epic" : 10,
             "user_stories_board_id": 8,

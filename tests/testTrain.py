@@ -5,7 +5,7 @@ from Simulator.Train import Train
 
 class TestTrain(unittest.TestCase):
     _one_team = {
-        "Team1" : {
+        "Dev Team 1" : {
             "num_epics_per_PI" : 3,
             "num_stories_per_epic" : 5,
             "user_stories_board_id": 2,
@@ -18,7 +18,7 @@ class TestTrain(unittest.TestCase):
     }
 
     _many_teams = {
-        "Team1" : {
+        "Dev Team 1" : {
             "num_epics_per_PI" : 3,
             "num_stories_per_epic" : 5,
             "user_stories_board_id": 2,
@@ -28,7 +28,7 @@ class TestTrain(unittest.TestCase):
             "prob_for_taking_stories_when_busy": 0.5,
             "team_members": ["Person1A", "Person1B", "Person1C"]
         },
-        "Team2" : {
+        "Dev Team 2" : {
             "num_epics_per_PI" : 3,
             "num_stories_per_epic" : 5,
             "user_stories_board_id": 5,
@@ -38,7 +38,7 @@ class TestTrain(unittest.TestCase):
             "prob_for_taking_stories_when_busy": 0.5,
             "team_members": ["Person2A", "Person2B", "Person2C"]
         },
-        "Team3" : {
+        "Dev Team 3" : {
             "num_epics_per_PI" : 3,
             "num_stories_per_epic" : 5,
             "user_stories_board_id": 8,

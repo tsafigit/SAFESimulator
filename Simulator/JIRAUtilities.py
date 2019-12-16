@@ -1,12 +1,19 @@
 from jira import JIRA
 from datetime import timedelta
 
+# 10124 Story Points
+# 10322 Team (list of team names)
 
 class JIRAUtilities:
+    # Translate state changes to JIRA transition values
+    transition_ids = {'ToDo': '11', 'Prog': '21', 'Imped': '41', 'Done': '31'}
+
     user_story_dict = {
         'project': 'SP',
         'issuetype': 'Story',
-        'summary': "Story 302"
+        'summary': "Story 302",
+        'customfield_10124' : 1, # For now, everything is 1 story point
+        'customfield_10322' : ['Dev Team 1']
     }
 
     # 10120 is the 'Epic Name' and it's a must have
@@ -14,7 +21,8 @@ class JIRAUtilities:
         'project': 'SP',
         'issuetype': 'Epic',
         'summary': "Epic 1",
-        'customfield_10120': "Epic 1"
+        'customfield_10120': "Epic 1",
+        'customfield_10322': ['Dev Team 1']
     }
 
     def __init__(self, instance_type):
@@ -28,17 +36,19 @@ class JIRAUtilities:
         del self.jira_inst
 
     # Creation
-    def create_epic(self, name):
+    def create_epic(self, name, team):
         dict = self.epic_dict
         dict['summary'] = name
         dict['customfield_10120'] = name
+        dict['customfield_10322'] = team.name
 
         epic = self.jira_inst.create_issue(fields=dict)
         return epic
 
-    def create_user_story_with_epic(self, user_story_name, epic_key=None):
+    def create_user_story_with_epic(self, user_story_name, team, epic_key=None):
         dict = self.user_story_dict
         dict['summary'] = user_story_name
+        dict['customfield_10322'] = team.name
 
         user_story = self.jira_inst.create_issue(fields=dict)
 
@@ -48,14 +58,14 @@ class JIRAUtilities:
         user_story = self.jira_inst.issue(user_story.id)
         return user_story
 
-    def create_list_of_epics(self, list_of_epics):
+    def create_list_of_epics(self, list_of_epics, team):
         for epic in list_of_epics:
-            jira_epic = self.create_epic(epic.name)
+            jira_epic = self.create_epic(epic.name, team)
             epic.key = jira_epic.key
 
-    def create_list_of_user_stories(self, list_of_user_stories):
+    def create_list_of_user_stories(self, list_of_user_stories, team):
         for user_story in list_of_user_stories:
-            jira_user_story = self.create_user_story_with_epic(user_story.name, user_story.epic.key)
+            jira_user_story = self.create_user_story_with_epic(user_story.name, team, user_story.epic.key)
             user_story.key = jira_user_story.key
 
 
@@ -81,8 +91,10 @@ class JIRAUtilities:
         print("Please start the sprint manually on a global board")
         key = input()
 
-    def add_issues_from_backlog_to_sprint(self, board_id, user_stories_keys):
-        return None
+    def add_issues_to_sprint(self, sprint_id, user_stories_keys):
+        print("Adding %d issues to Sprint %d" % (len(user_stories_keys), sprint_id))
+        self.jira_inst.add_issues_to_sprint(sprint_id, user_stories_keys)
 
     def update_one_issue(self, issue_key, transition):
-        return None
+        print("Updating issue %s, moving to %s" % (issue_key, transition))
+        self.jira_inst.transition_issue(issue_key, self.transition_ids[transition])

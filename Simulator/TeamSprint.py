@@ -81,7 +81,7 @@ class TeamSprint:
         self._populate_current_sprint_backlog(planned_velocity)
 
         # For now, velocity is in the number of stories
-        self.jira_utils.add_issues_from_backlog_to_sprint(self.team.user_stories_board_id, self.curr_sprint_all_content_keys)
+        self.jira_utils.add_issues_to_sprint(self.sprint_id, self.curr_sprint_all_content_keys)
 
         self.transition_table = TransitionTable(self.sprint_size, self.curr_sprint_all_content_keys)
 

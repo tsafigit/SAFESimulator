@@ -51,6 +51,10 @@ class TestJIRAUtilities(unittest.TestCase):
         # 10118 is the Epic Link
         self.assertEqual(story.fields.customfield_10118, epic.key)
 
+    def test_team_field(self):
+        issue = self.jira_utils.jira_inst.issue('sp-44')
+        print(issue)
+
 
 if __name__ == '__main__':
     unittest.main()
