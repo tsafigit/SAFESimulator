@@ -24,9 +24,6 @@ class TestTeam(unittest.TestCase):
         self.assertEqual(self.team.num_epics_per_PI, self._team_params["num_epics_per_PI"])
         self.assertEqual(self.team.num_stories_per_epic, self._team_params["num_stories_per_epic"])
 
-    def test_board_params(self):
-        self.assertEqual(self.team.user_stories_board_id, self._team_params["user_stories_board_id"])
-
     def test_cycle_time(self):
         self.assertEqual(self.team.story_cycle_time, self._team_params["story_cycle_time"])
         self.assertEqual(self.team.avg_velocity_num_of_stories, self._team_params["avg_velocity_num_of_stories"])

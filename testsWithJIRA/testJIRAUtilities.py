@@ -1,6 +1,7 @@
-import unittest
 from datetime import datetime
 from datetime import timedelta
+import unittest
+from unittest.mock import Mock
 
 from Simulator.JIRAUtilities import JIRAUtilities
 
@@ -14,6 +15,9 @@ class TestJIRAUtilities(unittest.TestCase):
 
     def setUp(self) -> None:
         self.jira_utils = JIRAUtilities(self._jira_inst_type)
+
+        self.team_mock = Mock()
+        self.team_mock.name = 'Dev Team 1'
 
     def tearDown(self) -> None:
         del self.jira_utils
@@ -34,26 +38,22 @@ class TestJIRAUtilities(unittest.TestCase):
         self.assertEqual(sprint.endDate, end_date_str)
 
     def test_create_epic(self):
-        epic = self.jira_utils.create_epic('Test Epic 1')
+        epic = self.jira_utils.create_epic('Test Epic 1', self.team_mock)
         self.assertEqual(epic.fields.summary, 'Test Epic 1')
         self.assertEqual(epic.fields.issuetype.name, 'Epic')
 
     def test_create_user_story_without_epic(self):
-        story = self.jira_utils.create_user_story_with_epic('Test Story')
+        story = self.jira_utils.create_user_story_with_epic('Test Story', self.team_mock)
         self.assertEqual(story.fields.summary, 'Test Story')
         self.assertEqual(story.fields.issuetype.name, 'Story')
 
     def test_create_user_story_with_epic(self):
-        epic = self.jira_utils.create_epic('Test Epic 2')
+        epic = self.jira_utils.create_epic('Test Epic 2', self.team_mock)
 
-        story = self.jira_utils.create_user_story_with_epic('Test Story E', epic.key)
+        story = self.jira_utils.create_user_story_with_epic('Test Story E', self.team_mock, epic.key)
 
         # 10118 is the Epic Link
         self.assertEqual(story.fields.customfield_10118, epic.key)
-
-    def test_team_field(self):
-        issue = self.jira_utils.jira_inst.issue('sp-44')
-        print(issue)
 
 
 if __name__ == '__main__':

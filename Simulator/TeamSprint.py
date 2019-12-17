@@ -119,8 +119,10 @@ class TeamSprint:
         self.cleanup_sprint()
 
     def update_one_day_transitions_in_jira(self, day):
+        print('Updatin JIRA for day %d, team %s, num of issues %d'
+              % (day, self.team.name, len(self.curr_sprint_all_content_keys)))
+
         curr_day = self.transition_table.transitions[day - 1]
         for idx, transition in enumerate(curr_day):
             if transition != 0:
-                print("idx %d, len %d" % (int(idx), len(self.curr_sprint_backlog.list_of_issues)))
-                self.jira_utils.update_one_issue(self.curr_sprint_backlog.list_of_issues[idx], transition)
+                self.jira_utils.update_one_issue(self.curr_sprint_all_content_keys[idx], transition)

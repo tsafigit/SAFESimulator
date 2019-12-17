@@ -8,7 +8,6 @@ class Team:
         self.name = name
         self.num_epics_per_PI = params["num_epics_per_PI"]
         self.num_stories_per_epic = params["num_stories_per_epic"]
-        self.user_stories_board_id = params["user_stories_board_id"]
         self.story_cycle_time = params["story_cycle_time"]
         self.avg_velocity_num_of_stories = params["avg_velocity_num_of_stories"]
         self.wip_limit = params["wip_limit"]
@@ -33,7 +32,7 @@ class Team:
         self.epic_backlog = backlog_generator.epic_backlog
         self.user_story_backlog = backlog_generator.user_story_backlog
 
-        self.jira_utils.create_list_of_epics(self.epic_backlog.list_of_issues)
+        self.jira_utils.create_list_of_epics(self.epic_backlog.list_of_issues, self)
         self.jira_utils.create_list_of_user_stories(self.user_story_backlog.list_of_issues, self)
 
     def reset_done(self):

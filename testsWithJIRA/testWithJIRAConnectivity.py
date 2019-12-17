@@ -1,53 +1,37 @@
-import unittest
-from unittest.mock import Mock
-from Simulator.ProgramIncrement import ProgramIncrement
-
 import sys
+import unittest
+from Simulator.ProgramIncrement import ProgramIncrement
+from Simulator.JIRAUtilities import JIRAUtilities
 
-class JIRAUtilsStub:
-    def create_list_of_epics(self, list_of_epics, team):
-        for epic in list_of_epics:
-            epic.key = epic.name
+class TestWithJIRAConnectivity(unittest.TestCase):
+    small_sprint_params = {
+        "Sprint1": {
+            "sprint_id": 0, # This will be updated on sprint creation in JIRA
+            "sprint_size": 5,
+            "sprint_index" : 1
+        },
+    }
 
-    def create_list_of_user_stories(self, list_of_user_stories, team):
-        for user_story in list_of_user_stories:
-            user_story.key = user_story.name
-
-    def add_issues_to_sprint(self, sprint_id, user_stories_keys):
-        return None
-
-    def create_sprint(self, board_id, sprint_name, start_date, sprint_size):
-        sprint = Mock()
-        sprint.id = 1
-        return sprint
-
-    def start_sprint(self, sprint_id):
-        return
-
-    def end_sprint(self, sprint_id):
-        return
-
-
-class TestProgramIncrement(unittest.TestCase):
     sprint_params = {
         "Sprint1": {
-            "sprint_id": 1,
+            "sprint_id": 0, # This will be updated on sprint creation in JIRA
             "sprint_size": 5,
             "sprint_index" : 1
         },
         "Sprint2": {
-            "sprint_id": 2,
+            "sprint_id": 0, # This will be updated on sprint creation in JIRA
             "sprint_size": 5,
             "sprint_index" : 2
-        }
+       }
     }
 
     small_train_params = {
         "Dev Team 1": {
-            "num_epics_per_PI" : 5,
-            "num_stories_per_epic" : 10,
+            "num_epics_per_PI" : 2,
+            "num_stories_per_epic" : 3,
+            "user_stories_board_id": 2,
             "story_cycle_time": 3,
-            "avg_velocity_num_of_stories": 20,
+            "avg_velocity_num_of_stories": 5,
             "wip_limit": 3,
             "prob_for_taking_stories_when_busy": 0.5,
             "team_members": ["Person1A", "Person1B", "Person1C"]
@@ -56,28 +40,28 @@ class TestProgramIncrement(unittest.TestCase):
 
     train_params = {
         "Dev Team 1": {
-            "num_epics_per_PI" : 5,
-            "num_stories_per_epic" : 10,
+            "num_epics_per_PI" : 3,
+            "num_stories_per_epic" : 7,
             "story_cycle_time": 3,
-            "avg_velocity_num_of_stories": 15,
+            "avg_velocity_num_of_stories": 7,
             "wip_limit": 3,
             "prob_for_taking_stories_when_busy": 0.5,
             "team_members": ["Person1A", "Person1B", "Person1C"]
         },
         "Dev Team 2": {
-            "num_epics_per_PI" : 5,
-            "num_stories_per_epic" : 10,
+            "num_epics_per_PI" : 3,
+            "num_stories_per_epic" : 7,
             "story_cycle_time": 3,
-            "avg_velocity_num_of_stories": 20,
+            "avg_velocity_num_of_stories": 10,
             "wip_limit": 3,
             "prob_for_taking_stories_when_busy": 0.5,
             "team_members": ["Person2A", "Person2B", "Person2C", "Person2D", "Person2E"]
         },
         "Dev Team 3": {
             "num_epics_per_PI" : 5,
-            "num_stories_per_epic" : 10,
+            "num_stories_per_epic" : 4,
             "story_cycle_time": 3,
-            "avg_velocity_num_of_stories": 10,
+            "avg_velocity_num_of_stories": 5,
             "wip_limit": 3,
             "prob_for_taking_stories_when_busy": 0.5,
             "team_members": ["Person3A", "Person3B", "Person3C"]
@@ -121,27 +105,41 @@ class TestProgramIncrement(unittest.TestCase):
             self.summarize_one_sprint_one_team(team_sprint)
 
     def setUp(self) -> None:
-        self.stdoutcopy = sys.stdout
-        sys.stdout = open('C:\\Users\\503127335\\PycharmProjects\\HelloWorld\\log.txt', 'w')
+        print('setup')
+        #self.stdoutcopy = sys.stdout
+        #sys.stdout = open('C:\\Users\\503127335\\PycharmProjects\\HelloWorld\\log.txt', 'w')
 
     def tearDown(self) -> None:
-        sys.stdout.close()
-        sys.stdout = self.stdoutcopy
+        print('teardown')
+        #sys.stdout.close()
+        #sys.stdout = self.stdoutcopy
 
-    def test_PI(self):
-        jira_utils_stub = JIRAUtilsStub()
+    def test_simple_PI(self):
+        jira_utils = JIRAUtilities('cloud')
 
-        one_pi = ProgramIncrement(self.train_params, self.sprint_params, jira_utils_stub)
+        one_pi = ProgramIncrement(self.small_train_params, self.small_sprint_params, jira_utils)
 
-        #one_pi.run(jira_inst)
         one_pi.train.initialize_backlogs()
 
-        for sprint in one_pi.sprints:
+        for day_idx, sprint in enumerate(one_pi.sprints):
             print('\n\n\nSprint %s' % sprint.sprint_name)
             sprint.run_one_sprint()
             self.summarize_sprint(sprint)
+            sprint.update_jira_for_sprint()
 
-        # update jira
+    def test_complex_PI(self):
+        jira_utils = JIRAUtilities('cloud')
+
+        one_pi = ProgramIncrement(self.train_params, self.sprint_params, jira_utils)
+
+        one_pi.train.initialize_backlogs()
+
+        for day_idx, sprint in enumerate(one_pi.sprints):
+            print('\n\n\nSprint %s' % sprint.sprint_name)
+            sprint.run_one_sprint()
+            self.summarize_sprint(sprint)
+            sprint.update_jira_for_sprint()
+
 
 if __name__ == '__main__':
     unittest.main()
