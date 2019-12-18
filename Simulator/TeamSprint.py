@@ -17,7 +17,9 @@ class TeamSprint:
         # Contains UserStories
         self.curr_sprint_backlog = []
         self.curr_sprint_all_content_keys = []
+
         self.transition_table = None
+        self.epic_transitions = {}
 
 
     def _value_with_random_deviation(self, value, max_change_percent):
@@ -101,6 +103,9 @@ class TeamSprint:
         print('Team %s: Returning ToDo stories to the backlog' % self.team.name)
         print(todo_story_keys)
 
+        # Find out which Epics changes their status
+        self.find_epic_transitions()
+
     def run_one_day(self, day):
         for p in self.team.team_members:
             p.finish_all_done_stories(day, self.transition_table)
@@ -118,6 +123,17 @@ class TeamSprint:
 
         self.cleanup_sprint()
 
+    def find_epic_transitions(self):
+        if self.team.epic_backlog == None:
+            return
+
+        for epic in self.team.epic_backlog.list_of_issues:
+            if epic.check_if_status_changed():
+                self.epic_transitions[epic.key] = epic.status
+
+        print("Epic transitions for %s %s" % (self.sprint_name, self.team.name))
+        print(self.epic_transitions)
+
     def update_one_day_transitions_in_jira(self, day):
         print('Updatin JIRA for day %d, team %s, num of issues %d'
               % (day, self.team.name, len(self.curr_sprint_all_content_keys)))
@@ -126,3 +142,8 @@ class TeamSprint:
         for idx, transition in enumerate(curr_day):
             if transition != 0:
                 self.jira_utils.update_one_issue(self.curr_sprint_all_content_keys[idx], transition)
+
+    def update_epic_transitions_in_jira(self):
+        for epic_key, transition in self.epic_transitions.items():
+            print("epic key %s, transition %s" % (epic_key, transition))
+            self.jira_utils.update_one_issue(epic_key, transition)

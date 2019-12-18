@@ -40,8 +40,8 @@ class TestWithJIRAConnectivity(unittest.TestCase):
 
     train_params = {
         "Dev Team 1": {
-            "num_epics_per_PI" : 3,
-            "num_stories_per_epic" : 7,
+            "num_epics_per_PI" : 7,
+            "num_stories_per_epic" : 3,
             "story_cycle_time": 3,
             "avg_velocity_num_of_stories": 7,
             "wip_limit": 3,
@@ -49,8 +49,8 @@ class TestWithJIRAConnectivity(unittest.TestCase):
             "team_members": ["Person1A", "Person1B", "Person1C"]
         },
         "Dev Team 2": {
-            "num_epics_per_PI" : 3,
-            "num_stories_per_epic" : 7,
+            "num_epics_per_PI" : 20,
+            "num_stories_per_epic" : 1,
             "story_cycle_time": 3,
             "avg_velocity_num_of_stories": 10,
             "wip_limit": 3,
@@ -115,7 +115,8 @@ class TestWithJIRAConnectivity(unittest.TestCase):
         #sys.stdout = self.stdoutcopy
 
     def test_simple_PI(self):
-        jira_utils = JIRAUtilities('cloud')
+        #jira_utils = JIRAUtilities('cloud')
+        jira_utils = JIRAUtilities('notcloud')
 
         one_pi = ProgramIncrement(self.small_train_params, self.small_sprint_params, jira_utils)
 
@@ -128,7 +129,8 @@ class TestWithJIRAConnectivity(unittest.TestCase):
             sprint.update_jira_for_sprint()
 
     def test_complex_PI(self):
-        jira_utils = JIRAUtilities('cloud')
+        #jira_utils = JIRAUtilities('cloud')
+        jira_utils = JIRAUtilities('notcloud')
 
         one_pi = ProgramIncrement(self.train_params, self.sprint_params, jira_utils)
 

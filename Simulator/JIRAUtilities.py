@@ -1,31 +1,47 @@
-from jira import JIRA
+import os
 from datetime import timedelta
+from jira import JIRA
 
 # 10124 Story Points
-# 10322 Team (list of team names)
 
 class JIRAUtilities:
     # Translate state changes to JIRA transition values
     transition_ids = {'ToDo': '11', 'Prog': '21', 'Imped': '41', 'Done': '31'}
 
-    user_story_dict = {
+    user_story_dict_cloud = {
         'project': 'SP',
         'issuetype': 'Story',
         'summary': "Story 302",
-        #'customfield_10124' : 1, # For now, everything is 1 story point
-        'customfield_10322' : [{'value': 'Dev Team 1'}] # Team field
+        'customfield_10322' : [{'value': 'Dev Team 1'}] # Team field ********cloud
+    }
+
+    user_story_dict_vm = {
+        'project': 'SP',
+        'issuetype': 'Story',
+        'summary': "Story 302",
+        'customfield_10201': [{'value': 'Dev Team 1'}]  # Team field vm
     }
 
     # 10120 is the 'Epic Name' and it's a must have
-    epic_dict = {
+    epic_dict_cloud = {
         'project': 'SP',
         'issuetype': 'Epic',
         'summary': "Epic 1",
-        'customfield_10120': "Epic 1", # Epic name is the same as Epic summary
-        'customfield_10322':  [{'value': 'Dev Team 1'}] # Team field
+        'customfield_10120': "Epic 1", # Epic name is the same as Epic summary ********cloud
+        'customfield_10322':  [{'value': 'Dev Team 1'}] # Team field ********cloud
+    }
+
+    epic_dict_vm = {
+        'project': 'SP',
+        'issuetype': 'Epic',
+        'summary': "Epic 1",
+        'customfield_10103': "Epic 1",  # Epic name is the same as Epic summary vm
+        'customfield_10201': [{'value': 'Dev Team 1'}]  # Team field vm
     }
 
     def __init__(self, instance_type):
+        self.instance_type = instance_type
+
         if instance_type == 'cloud':
             self.jira_inst = JIRA(basic_auth=('nela.g@dr-agile.com', 'FiJBeI3H81sceRofBcY4E84E'),
                                   options={'server': 'https://dr-agile.atlassian.net'})
@@ -37,24 +53,37 @@ class JIRAUtilities:
 
     # Creation
     def create_epic(self, name, team):
-        dict = self.epic_dict
+        if self.instance_type == 'cloud':
+            dict = self.epic_dict_cloud
+            dict['customfield_10120'] = name   # ********cloud
+            dict['customfield_10322'] = [{'value': team.name}] # ********cloud
+        else:
+            dict = self.epic_dict_vm
+            dict['customfield_10103'] = name
+            dict['customfield_10201'] = {'value': team.name}
+
         dict['summary'] = name
-        dict['customfield_10120'] = name
-        dict['customfield_10322'] = [{'value': team.name}]
 
         epic = self.jira_inst.create_issue(fields=dict)
         return epic
 
     def create_user_story_with_epic(self, user_story_name, team, epic_key=None):
-        dict = self.user_story_dict
+        if self.instance_type == 'cloud':
+            dict = self.user_story_dict_cloud
+            dict['customfield_10322'] = [{'value': team.name}] # ********cloud
+        else:
+            dict = self.user_story_dict_vm
+            dict['customfield_10201'] = {'value': team.name}
+
         dict['summary'] = user_story_name
-        dict['customfield_10322'] = [{'value': team.name}]
 
         user_story = self.jira_inst.create_issue(fields=dict)
 
         if epic_key:
             self.jira_inst.add_issues_to_epic(epic_key, [user_story.key])
 
+        # Note the performance impact, this is another fetch after
+        # adding a story to epic
         user_story = self.jira_inst.issue(user_story.id)
         return user_story
 
@@ -104,3 +133,9 @@ class JIRAUtilities:
     def update_one_issue(self, issue_key, transition):
         print("Updating issue %s, moving to %s" % (issue_key, transition))
         self.jira_inst.transition_issue(issue_key, self.transition_ids[transition])
+
+    def advance_time_by_one_day(self):
+        if self.instance_type != 'cloud':
+            path = "C:\\Windows\\WinSxS\\amd64_openssh-client-components-onecore_31bf3856ad364e35_10.0.17763.1_none_f0c3262e74c7e35c\\ssh.exe nelkag@192.168.56.101 \"cd /home/nelkag/Simulator/misc; python /home/nelkag/Simulator/misc/advanceoneday.py\""
+            print(path)
+            os.system(path)

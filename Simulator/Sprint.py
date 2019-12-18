@@ -6,7 +6,8 @@ from datetime import timedelta
 
 class Sprint:
     _weekend_size = 2
-    _board_id = 106 #For now, needs to be a param that comes from the PI
+    #_board_id = 106 #For now, needs to be a param that comes from the PI
+    _board_id = 1
 
     def __init__(self, sprint_name, sprint_params, train, jira_utils):
         self.sprint_name = sprint_name
@@ -60,6 +61,8 @@ class Sprint:
             print ("\nDay %d" % int(day_index + 1))
             self.update_one_day_transitions_in_jira(day_index + 1)
 
+        self.update_epic_transitions_for_sprint()
+
         self.jira_utils.end_sprint(self.sprint_id)
 
     def update_one_day_transitions_in_jira(self, day):
@@ -67,4 +70,8 @@ class Sprint:
             team_sprint.update_one_day_transitions_in_jira(day)
 
         #update time here
-        print('Need to move time forward')
+        self.jira_utils.advance_time_by_one_day()
+
+    def update_epic_transitions_for_sprint(self):
+        for team_sprint in self.team_sprints:
+            team_sprint.update_epic_transitions_in_jira()
