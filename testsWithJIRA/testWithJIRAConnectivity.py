@@ -130,7 +130,7 @@ class TestWithJIRAConnectivity(unittest.TestCase):
 
     def test_complex_PI(self):
         #jira_utils = JIRAUtilities('cloud')
-        jira_utils = JIRAUtilities('notcloud')
+        jira_utils = JIRAUtilities('notcloud') #vm version
 
         one_pi = ProgramIncrement(self.train_params, self.sprint_params, jira_utils)
 
