@@ -5,10 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/Simulator" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="Python 3.8 (SAFESimulator)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-  </component>
-  <component name="TestRunnerService">
-    <option name="PROJECT_TEST_RUNNER" value="Unittests" />
   </component>
 </module>

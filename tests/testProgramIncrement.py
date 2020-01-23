@@ -122,7 +122,10 @@ class TestProgramIncrement(unittest.TestCase):
 
     def setUp(self) -> None:
         self.stdoutcopy = sys.stdout
-        sys.stdout = open('C:\\Users\\503127335\\PycharmProjects\\HelloWorld\\log.txt', 'w')
+        # Tsafi: bug fix: change log location to be relative to current working dir
+        # sys.stdout = open('C:\\Users\\503127335\\PycharmProjects\\HelloWorld\\log.txt', 'w')
+        sys.stdout = open('..\\log\\log.txt', 'w')
+
 
     def tearDown(self) -> None:
         sys.stdout.close()

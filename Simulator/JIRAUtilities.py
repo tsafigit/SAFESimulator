@@ -10,43 +10,60 @@ class JIRAUtilities:
 
     user_story_dict_cloud = {
         'project': 'SP',
+        #'project': 'TTP',  # Tsafi, 15 Jan 2020
         'issuetype': 'Story',
         'summary': "Story 302",
         'customfield_10322' : [{'value': 'Dev Team 1'}] # Team field ********cloud
     }
 
     user_story_dict_vm = {
-        'project': 'SP',
+        #'project': 'SP',
+        'project': 'TTP', #Tsafi 14 Jan 2020 - temp change to work with TTP project already exists on local Jira
         'issuetype': 'Story',
         'summary': "Story 302",
-        'customfield_10201': [{'value': 'Dev Team 1'}]  # Team field vm
+        #'customfield_10201': [{'value': 'Dev Team 1'}]  # Team field vm
+        'customfield_10200': [{'value': 'Dev Team 1'}]  # Tsafi 21 Jan 2020
     }
 
     # 10120 is the 'Epic Name' and it's a must have
     epic_dict_cloud = {
         'project': 'SP',
-        'issuetype': 'Epic',
+        #'project': 'TTP',  # Tsafi, 15 Jan 2020
+        #'issuetype': 'Epic',
+        'issuetype': {'name': 'Epic'},   # Tsafi 15 Jan 2020
         'summary': "Epic 1",
         'customfield_10120': "Epic 1", # Epic name is the same as Epic summary ********cloud
         'customfield_10322':  [{'value': 'Dev Team 1'}] # Team field ********cloud
     }
 
     epic_dict_vm = {
-        'project': 'SP',
+        #'project': 'SP',
+        'project': 'TTP',  # Tsafi 14 Jan 2020 - temp change to work with TTP project already exists on local Jira
         'issuetype': 'Epic',
         'summary': "Epic 1",
         'customfield_10103': "Epic 1",  # Epic name is the same as Epic summary vm
-        'customfield_10201': [{'value': 'Dev Team 1'}]  # Team field vm
+        #'customfield_10102': "Epic 1",  # Tsafi 14 Jan 2020
+        'customfield_10200': [{'value': 'Dev Team 1'}]  # Tsafi 21 Jan 2020 - Team field vm
     }
 
     def __init__(self, instance_type):
         self.instance_type = instance_type
 
         if instance_type == 'cloud':
-            self.jira_inst = JIRA(basic_auth=('nela.g@dr-agile.com', 'FiJBeI3H81sceRofBcY4E84E'),
+            # Using Nela's Jira cloud account
+            #self.jira_inst = JIRA(basic_auth=('nela.g@dr-agile.com', 'FiJBeI3H81sceRofBcY4E84E'),
+            #                      options={'server': 'https://dr-agile.atlassian.net'})
+            # Using Tsafi's Jira cloud account
+            self.jira_inst = JIRA(basic_auth=('tsafrir.m@dr-agile.com', 'tDshA7M9zEhMkaiC13RA146E'),
                                   options={'server': 'https://dr-agile.atlassian.net'})
         else:
-            self.jira_inst = JIRA(basic_auth=('nela.g', 'q1w2e3r4'), options={'server': 'http://192.168.56.101:8080'})
+            # Using Nela's Jira local VM
+            #self.jira_inst = JIRA(basic_auth=('nela.g', 'q1w2e3r4'), options={'server': 'http://192.168.56.101:8080'})
+            # Using Tsafi's Jira local VM
+            #self.jira_inst = JIRA(basic_auth=('tsafrir.m', 'Sim1965'), options={'server': 'http://192.168.43.55:8080'})
+            #self.jira_inst = JIRA(basic_auth=('tsafrir.m', 'Sim1965'), options={'server': 'http://192.168.43.41:8080'})
+            self.jira_inst = JIRA(basic_auth=('tsafrir.m', 'Sim1965'), options={'server': 'http://10.0.0.61:8080'})
+
 
     def __del__(self):
         del self.jira_inst
@@ -59,8 +76,10 @@ class JIRAUtilities:
             dict['customfield_10322'] = [{'value': team.name}] # ********cloud
         else:
             dict = self.epic_dict_vm
-            dict['customfield_10103'] = name
-            dict['customfield_10201'] = {'value': team.name}
+            dict['customfield_10103'] = name  # tsafi 21 Jan 2020
+            #dict['customfield_10102'] = name # Tsafi 14 Jan 2020
+            #dict['customfield_10201'] = {'value': team.name}
+            dict['customfield_10200'] = {'value': team.name} # Tsafi 21 Jan 2020
 
         dict['summary'] = name
 
@@ -73,7 +92,8 @@ class JIRAUtilities:
             dict['customfield_10322'] = [{'value': team.name}] # ********cloud
         else:
             dict = self.user_story_dict_vm
-            dict['customfield_10201'] = {'value': team.name}
+            #dict['customfield_10201'] = {'value': team.name}
+            dict['customfield_10200'] = {'value': team.name} # Tsafi 21 Jan 2020
 
         dict['summary'] = user_story_name
 
@@ -136,6 +156,11 @@ class JIRAUtilities:
 
     def advance_time_by_one_day(self):
         if self.instance_type != 'cloud':
-            path = "C:\\Windows\\WinSxS\\amd64_openssh-client-components-onecore_31bf3856ad364e35_10.0.17763.1_none_f0c3262e74c7e35c\\ssh.exe nelkag@192.168.56.101 \"cd /home/nelkag/Simulator/misc; python /home/nelkag/Simulator/misc/advanceoneday.py\""
+            #Tsafi 20 Jan 2020, change path for Tsafi's local VM
+            #path = "C:\\Windows\\WinSxS\\amd64_openssh-client-components-onecore_31bf3856ad364e35_10.0.17763.1_none_f0c3262e74c7e35c\\ssh.exe nelkag@192.168.56.101 \"cd /home/nelkag/Simulator/misc; python /home/nelkag/Simulator/misc/advanceoneday.py\""
+            #path = "C:\\Windows\\System32\\OpenSSH\\ssh.exe tsafi@192.168.43.41 \"cd /home/tsafi/SAFESimulator; python3 ./advanceoneday.py\""
+            #path = "C:\\Windows\\System32\\OpenSSH\\ssh.exe tsafi@10.0.0.61 python3 /home/tsafi/SAFESimulator/advanceoneday.py"
+            #path = "C:\\Windows\\System32\\OpenSSH\\ssh.exe tsafi@10.0.0.61 date"
+            path = "C:\\Windows\\Sysnative\\OpenSSH\\ssh.exe tsafi@10.0.0.61 python3 ./SAFESimulator/advanceoneday.py"
             print(path)
             os.system(path)
