@@ -4,19 +4,30 @@ import unittest
 from unittest.mock import Mock
 
 from Simulator.JIRAUtilities import JIRAUtilities
+from Constants import JIRA_INST, DEFAULT_JIRA_PARAMS  # Tsafi, 3 Feb 2020
 
 class TestJIRAUtilities(unittest.TestCase):
     # Tsafi 16 Jan 2020 - change to test with local VM
     #_jira_inst_type = 'cloud'
-    _jira_inst_type = 'virtual_local'
+    #_jira_inst_type = 'virtual_local'
+
+    # Tsafi 3 Feb 2020 - added below 'if' to dynamically decide between local and cloud
+    if JIRA_INST == 'LOCAL':
+        _jira_inst_type = 'virtual_local'
+    elif JIRA_INST == 'CLOUD':
+        _jira_inst_type = 'cloud'
+    else:
+        print("*** DEBUG: ERROR - Invalid Value for JIRA_INST")
+
 
     _sprint_name = "Sprint A"
     _sprint_size = 7
     #_board_id = 106
     #_board_id = 112 # Tsafi, 9 Jan 2020 temp test using TTNG cloud project for which I'm the lead
     #_board_id = 113 # Tsafi, 9 Jan 2020, using the new (cloud) project SPV2, board 113
-    _board_id = 1 # Tsafi, 13 Jan 2020, using a sample board in local VM Jira, board 1
+    #_board_id = 1 # Tsafi, 13 Jan 2020, using a sample board in local VM Jira, board 1
     #_board_id = 114  # Tsafi, 15 Jan 2020, using a sample board in the cloud Jira, board 114
+    _board_id = DEFAULT_JIRA_PARAMS[JIRA_INST]['BOARD_ID']  # Tsafi, 3 Feb 2020
 
     def setUp(self) -> None:
         self.jira_utils = JIRAUtilities(self._jira_inst_type)

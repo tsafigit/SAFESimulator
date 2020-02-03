@@ -2,6 +2,7 @@ import sys
 import unittest
 from Simulator.ProgramIncrement import ProgramIncrement
 from Simulator.JIRAUtilities import JIRAUtilities
+from Constants import JIRA_INST  # Tsafi 3 Feb 2020
 
 class TestWithJIRAConnectivity(unittest.TestCase):
     small_sprint_params = {
@@ -27,13 +28,13 @@ class TestWithJIRAConnectivity(unittest.TestCase):
 
     small_train_params = {
         "Dev Team 1": {
-            "num_epics_per_PI" : 2,
-            "num_stories_per_epic" : 3,
+            "num_epics_per_PI" : 2,                 #Tsafi, 28 Jan 2020 2=>1
+            "num_stories_per_epic" : 3,             #Tsafi, 28 Jan 2020 3=>5
             "user_stories_board_id": 2,
-            "story_cycle_time": 3,
-            "avg_velocity_num_of_stories": 5,
+            "story_cycle_time": 3,                  #Tsafi, 28 Jan 2020 3=>2
+            "avg_velocity_num_of_stories": 5,      #Tsafi, 28 Jan 2020 changed from 5 to 10
             "wip_limit": 3,
-            "prob_for_taking_stories_when_busy": 0.5,
+            "prob_for_taking_stories_when_busy": 0, #Tsafi, 28 Jan 2020 changed from 0.5 to 0
             "team_members": ["Person1A", "Person1B", "Person1C"]
         }
     }
@@ -116,7 +117,15 @@ class TestWithJIRAConnectivity(unittest.TestCase):
 
     def test_simple_PI(self):
         #jira_utils = JIRAUtilities('cloud')
-        jira_utils = JIRAUtilities('notcloud')
+        #jira_utils = JIRAUtilities('notcloud')
+        # Tsafi 3 Feb 2020 - added below 'if' to dynamically decide between local and cloud
+        if JIRA_INST == 'LOCAL':
+            jira_utils = JIRAUtilities('notcloud')
+        elif JIRA_INST == 'CLOUD':
+            jira_utils = JIRAUtilities('cloud')
+        else:
+            print("*** DEBUG: ERROR - Invalid Value for JIRA_INST")
+            return
 
         one_pi = ProgramIncrement(self.small_train_params, self.small_sprint_params, jira_utils)
 
@@ -130,7 +139,15 @@ class TestWithJIRAConnectivity(unittest.TestCase):
 
     def test_complex_PI(self):
         #jira_utils = JIRAUtilities('cloud')
-        jira_utils = JIRAUtilities('notcloud') #vm version
+        #jira_utils = JIRAUtilities('notcloud') #vm version
+        # Tsafi 3 Feb 2020 - added below 'if' to dynamically decide between local and cloud
+        if JIRA_INST == 'LOCAL':
+            jira_utils = JIRAUtilities('notcloud')
+        elif JIRA_INST == 'CLOUD':
+            jira_utils = JIRAUtilities('cloud')
+        else:
+            print("*** DEBUG: ERROR - Invalid Value for JIRA_INST")
+            return
 
         one_pi = ProgramIncrement(self.train_params, self.sprint_params, jira_utils)
 

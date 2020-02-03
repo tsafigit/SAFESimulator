@@ -1,13 +1,15 @@
 from Simulator.TeamSprint import TeamSprint
 from datetime import datetime
 from datetime import timedelta
+from Constants import JIRA_INST, DEFAULT_JIRA_PARAMS
 
 
 
 class Sprint:
     _weekend_size = 2
     #_board_id = 106 #For now, needs to be a param that comes from the PI
-    _board_id = 1
+    #_board_id = 1
+    _board_id = DEFAULT_JIRA_PARAMS[JIRA_INST]['BOARD_ID']  # Tsafi, 3 Feb 2020
 
     def __init__(self, sprint_name, sprint_params, train, jira_utils):
         self.sprint_name = sprint_name

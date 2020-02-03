@@ -1,6 +1,7 @@
 import os
 from datetime import timedelta
 from jira import JIRA
+from Constants import DEFAULT_JIRA_PARAMS, LOCAL_JIRA_IP, JIRA_INST
 
 # 10124 Story Points
 
@@ -9,16 +10,18 @@ class JIRAUtilities:
     transition_ids = {'ToDo': '11', 'Prog': '21', 'Imped': '41', 'Done': '31'}
 
     user_story_dict_cloud = {
-        'project': 'SP',
+        #'project': 'SP',
         #'project': 'TTP',  # Tsafi, 15 Jan 2020
+        'project': DEFAULT_JIRA_PARAMS[JIRA_INST]['PROJECT'],  # Tsafi 3 Feb 2020
         'issuetype': 'Story',
         'summary': "Story 302",
-        'customfield_10322' : [{'value': 'Dev Team 1'}] # Team field ********cloud
+        'customfield_10322' : [{'value': 'Dev Team 1'}]  # Team field ********cloud
     }
 
     user_story_dict_vm = {
         #'project': 'SP',
-        'project': 'TTP', #Tsafi 14 Jan 2020 - temp change to work with TTP project already exists on local Jira
+        #'project': 'TTP', #Tsafi 14 Jan 2020 - temp change to work with TTP project already exists on local Jira
+        'project': DEFAULT_JIRA_PARAMS[JIRA_INST]['PROJECT'],  # Tsafi 3 Feb 2020
         'issuetype': 'Story',
         'summary': "Story 302",
         #'customfield_10201': [{'value': 'Dev Team 1'}]  # Team field vm
@@ -27,8 +30,9 @@ class JIRAUtilities:
 
     # 10120 is the 'Epic Name' and it's a must have
     epic_dict_cloud = {
-        'project': 'SP',
+        #'project': 'SP',
         #'project': 'TTP',  # Tsafi, 15 Jan 2020
+        'project': DEFAULT_JIRA_PARAMS[JIRA_INST]['PROJECT'],  # Tsafi 3 Feb 2020
         #'issuetype': 'Epic',
         'issuetype': {'name': 'Epic'},   # Tsafi 15 Jan 2020
         'summary': "Epic 1",
@@ -37,8 +41,7 @@ class JIRAUtilities:
     }
 
     epic_dict_vm = {
-        #'project': 'SP',
-        'project': 'TTP',  # Tsafi 14 Jan 2020 - temp change to work with TTP project already exists on local Jira
+        'project': DEFAULT_JIRA_PARAMS[JIRA_INST]['PROJECT'],  # Tsafi 3 Feb 2020
         'issuetype': 'Epic',
         'summary': "Epic 1",
         'customfield_10103': "Epic 1",  # Epic name is the same as Epic summary vm
@@ -54,15 +57,22 @@ class JIRAUtilities:
             #self.jira_inst = JIRA(basic_auth=('nela.g@dr-agile.com', 'FiJBeI3H81sceRofBcY4E84E'),
             #                      options={'server': 'https://dr-agile.atlassian.net'})
             # Using Tsafi's Jira cloud account
-            self.jira_inst = JIRA(basic_auth=('tsafrir.m@dr-agile.com', 'tDshA7M9zEhMkaiC13RA146E'),
-                                  options={'server': 'https://dr-agile.atlassian.net'})
+            #self.jira_inst = JIRA(basic_auth=('tsafrir.m@dr-agile.com', 'tDshA7M9zEhMkaiC13RA146E'),
+            #                      options={'server': 'https://dr-agile.atlassian.net'})
+            self.jira_inst = JIRA(
+                basic_auth=(DEFAULT_JIRA_PARAMS['CLOUD']['USER'], DEFAULT_JIRA_PARAMS['CLOUD']['PASS']),
+                options={'server': DEFAULT_JIRA_PARAMS['CLOUD']['URL']})
         else:
             # Using Nela's Jira local VM
             #self.jira_inst = JIRA(basic_auth=('nela.g', 'q1w2e3r4'), options={'server': 'http://192.168.56.101:8080'})
             # Using Tsafi's Jira local VM
             #self.jira_inst = JIRA(basic_auth=('tsafrir.m', 'Sim1965'), options={'server': 'http://192.168.43.55:8080'})
             #self.jira_inst = JIRA(basic_auth=('tsafrir.m', 'Sim1965'), options={'server': 'http://192.168.43.41:8080'})
-            self.jira_inst = JIRA(basic_auth=('tsafrir.m', 'Sim1965'), options={'server': 'http://10.0.0.61:8080'})
+            #self.jira_inst = JIRA(basic_auth=('tsafrir.m', 'Sim1965'), options={'server': 'http://10.0.0.61:8080'})
+            self.jira_inst = JIRA(
+                basic_auth=(DEFAULT_JIRA_PARAMS['LOCAL']['USER'], DEFAULT_JIRA_PARAMS['LOCAL']['PASS']),
+                options={'server': DEFAULT_JIRA_PARAMS['LOCAL']['URL']}
+            )
 
 
     def __del__(self):
@@ -161,6 +171,8 @@ class JIRAUtilities:
             #path = "C:\\Windows\\System32\\OpenSSH\\ssh.exe tsafi@192.168.43.41 \"cd /home/tsafi/SAFESimulator; python3 ./advanceoneday.py\""
             #path = "C:\\Windows\\System32\\OpenSSH\\ssh.exe tsafi@10.0.0.61 python3 /home/tsafi/SAFESimulator/advanceoneday.py"
             #path = "C:\\Windows\\System32\\OpenSSH\\ssh.exe tsafi@10.0.0.61 date"
-            path = "C:\\Windows\\Sysnative\\OpenSSH\\ssh.exe tsafi@10.0.0.61 python3 ./SAFESimulator/advanceoneday.py"
+            #path = "C:\\Windows\\Sysnative\\OpenSSH\\ssh.exe tsafi@10.0.0.61 python3 ./SAFESimulator/advanceoneday.py"
+            #path = "C:\\Windows\\Sysnative\\OpenSSH\\ssh.exe tsafi@192.168.43.41 python3 ./SAFESimulator/advanceoneday.py"
+            path = 'C:\\Windows\\Sysnative\\OpenSSH\\ssh.exe tsafi@' + LOCAL_JIRA_IP + ' python3 ./SAFESimulator/advanceoneday.py'
             print(path)
             os.system(path)
