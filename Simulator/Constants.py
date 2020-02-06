@@ -1,6 +1,6 @@
 # Jira instance
-JIRA_INST = 'LOCAL'
-#JIRA_INST = 'CLOUD'
+#JIRA_INST = 'LOCAL'
+JIRA_INST = 'CLOUD'
 
 # Teams
 MIN_NUM_TEAMS = 1
@@ -45,8 +45,5 @@ DEFAULT_JIRA_PARAMS = {
     }
 }
 
-
-
-
-LOCAL_JIRA_URL = "http://10.0.0.61:8080"
-CLOUD_JIRA_URL = "https://dr-agile.atlassian.net"
+# Other
+DEFAULT_PATH_FOR_SAVED_PARAMS = "..\\saved_params\\"  # path to a folder

@@ -1,4 +1,5 @@
-import pprint # Todo TEMP use of pprint - remove
+import pprint  # Todo TEMP use of pprint - remove
+import json
 import sys
 from Simulator.ProgramIncrement import ProgramIncrement
 from Simulator.JIRAUtilities import JIRAUtilities
@@ -7,11 +8,10 @@ from Constants import MIN_NUM_TEAMS, MAX_MUN_TEAMS, MIN_NUM_SPRINTS, MAX_NUM_SPR
     DEFAULT_AVG_VELOCITY_NUM_OF_STORIES, DEFAULT_NUM_EPICS_PER_PI, \
     DEFAULT_NUM_STORIES_PER_EPIC, DEFAULT_PROB_FOR_TAKING_STORIES_WHEN_BUSY,\
     DEFAULT_STORY_CYCLE_TIME, DEFAULT_TEAM_SIZE, DEFAULT_WIP_LIMIT, DEFAULT_SPRINT_SIZE, \
-    DEFAULT_NUM_SPRINTS, DEFAULT_NUM_TEAMS, JIRA_INST
+    DEFAULT_NUM_SPRINTS, DEFAULT_NUM_TEAMS, JIRA_INST, DEFAULT_PATH_FOR_SAVED_PARAMS
 
 
 
-#def summarize_one_sprint_one_team(self, team_sprint):
 def summarize_one_sprint_one_team(team_sprint):
     print("\nTeam %s" % team_sprint.team.name)
 
@@ -43,41 +43,13 @@ def summarize_one_sprint_one_team(team_sprint):
     print('Todo stories:')
     print(stories_todo)
 
-#def summarize_sprint(self, sprint):
+
 def summarize_sprint(sprint):
     print('\n\nSUMMARY')
     for team_sprint in sprint.team_sprints:
         #self.summarize_one_sprint_one_team(team_sprint)
         summarize_one_sprint_one_team(team_sprint)
-"""
-def test_simple_PI(self):
-    #jira_utils = JIRAUtilities('cloud')
-    jira_utils = JIRAUtilities('notcloud')
 
-    one_pi = ProgramIncrement(self.small_train_params, self.small_sprint_params, jira_utils)
-
-    one_pi.train.initialize_backlogs()
-
-    for day_idx, sprint in enumerate(one_pi.sprints):
-        print('\n\n\nSprint %s' % sprint.sprint_name)
-        sprint.run_one_sprint()
-        self.summarize_sprint(sprint)
-        sprint.update_jira_for_sprint()
-
-def test_complex_PI(self):
-    #jira_utils = JIRAUtilities('cloud')
-    jira_utils = JIRAUtilities('notcloud') #vm version
-
-    one_pi = ProgramIncrement(self.train_params, self.sprint_params, jira_utils)
-
-    one_pi.train.initialize_backlogs()
-
-    for day_idx, sprint in enumerate(one_pi.sprints):
-        print('\n\n\nSprint %s' % sprint.sprint_name)
-        sprint.run_one_sprint()
-        self.summarize_sprint(sprint)
-        sprint.update_jira_for_sprint()
-"""
 def run_PI(simulation_config_dict):
     if JIRA_INST == 'CLOUD':
         jira_utils = JIRAUtilities('cloud')  # todo: Tsafi 3 Feb 2020: 'cloud' and 'notcloud' preserved for now. To refactor.
@@ -99,23 +71,34 @@ def run_PI(simulation_config_dict):
         summarize_sprint(sprint)
         sprint.update_jira_for_sprint()
 
-def get_simulation_params_from_user(simulation_config_dict):
 
+def load_saved_params():
+    file_name = input("Enter file name of a previously saved params file (without the .json suffix): ")
+    # todo: verify file exists. Handle exception..
+    file_path = DEFAULT_PATH_FOR_SAVED_PARAMS + file_name + ".json"
+    with open(file_path) as json_file:
+        simulation_config_dict = json.load(json_file)
+    # todo: verify file loaded successfully into dict
+    print("*** DEBUG: params read from file:")
+    pprint.pprint(simulation_config_dict)
+    input("*** Press Enter to continue")
+    return simulation_config_dict
+
+
+def get_simulation_params_from_user():
+
+    simulation_config_dict = {}
     print("Enter number of teams between %d and %d (default is %d): "
           %(MIN_NUM_TEAMS, MAX_MUN_TEAMS, DEFAULT_NUM_TEAMS))
     num_teams = int(input() or DEFAULT_NUM_TEAMS)       # ToDo: validate user input
-    #print("*** DEBUG: num_teams: ", num_teams)
-
 
     print("Enter number of sprints between %d and %d (default is %d): "
           % (MIN_NUM_SPRINTS, MAX_NUM_SPRINTS, DEFAULT_NUM_SPRINTS))
     num_sprints = int(input() or DEFAULT_NUM_SPRINTS)     # ToDo: validate user input
-    #print("*** DEBUG: num_sprints: ", num_sprints)
 
     print("Enter sprint size (default is %d): " % DEFAULT_SPRINT_SIZE)   #ToDo: what does the number represents - number of working days, or calendar days?
     # all sprints assumed to be of same size
     sprint_size = int(input() or DEFAULT_SPRINT_SIZE)     # ToDo: validate user input
-    #print("*** DEBUG: sprint_size: ", sprint_size)
 
     # Create sprint_params dict based on user input
     sprint_params = {}
@@ -130,7 +113,6 @@ def get_simulation_params_from_user(simulation_config_dict):
             "sprint_index": sprint_index
          }
     simulation_config_dict['sprint_params'] = sprint_params
-    #print("*** DEBUG: sprint_params: \n", simulation_config_dict['sprint_params'])
 
     # Create train_params dict based on user input
     # Todo: validate user inputs for all user inputs...
@@ -178,13 +160,56 @@ def get_simulation_params_from_user(simulation_config_dict):
         }
         simulation_config_dict['train_params'] = train_params
 
-        print("*** DEBUG: train_params:")
-        pprint.pprint(simulation_config_dict['train_params'])
+        #print("*** DEBUG: train_params:")
+        #pprint.pprint(simulation_config_dict['train_params'])
+    return simulation_config_dict
 
-print("*** DEBUG: STARTING...\n")
+def save_simulation_params(simulation_config_dict):
+    print("Config dict to save:")
+    pprint.pprint(simulation_config_dict)
+    print("Do you want to save the simulation parameters?")
+    r = input("please enter Yes or No: ")
+    while (r != "Yes" and r != "No"):
+        r = input("Wrong selection! Please enter Yes or No: ")
+
+    if r != "Yes":
+        return
+
+    # r == "Yes". User wants to save the params
+
+    file_name = input("Please enter file name: ")
+    # todo: validate legal file name
+    # todo: check if already exists with same name. Override?
+    print("file: " + file_name + " will be saved to this location: " + DEFAULT_PATH_FOR_SAVED_PARAMS + " in .json format")
+    j = json.dumps(simulation_config_dict)
+    file_path = DEFAULT_PATH_FOR_SAVED_PARAMS + file_name + ".json"  # todo: if file name already ends with ".json" then no need to add...
+    with open(file_path, 'w') as outfile:
+        json.dump(simulation_config_dict, outfile)
+    # todo: verify file saved successfully
+
+
+print("*** DEBUG: SIMULATION STARTING...\n")
+
 simulation_config_dict = {}
-get_simulation_params_from_user(simulation_config_dict)
+print("Simulation params can be either loaded from a previously saved file or entered manually.")
+print("Load params from a previously saved file?")
+r = input("Please enter Yes or No: ")
+while (r != "Yes" and r != "No"):
+    r = input("Wrong selection! Please enter Yes or No: ")
 
-print("*** DEBUG: after get user params. simulation_config_dict:...\n")
-pprint.pprint(simulation_config_dict)
-run_PI(simulation_config_dict)
+if r == "Yes":
+    simulation_config_dict = load_saved_params()
+    print("*** DEBUG: after loading saved file\n")
+else:
+    simulation_config_dict = get_simulation_params_from_user()
+    print("*** DEBUG: after getting params from user\n")
+    print("*** \nSimulation will run with following params:")
+    pprint.pprint(simulation_config_dict)
+    input("*** Press Enter to continue")
+    save_simulation_params(simulation_config_dict)
+    print("*** DEBUG: after save user params. simulation_config_dict:...\n")
+    input("*** Press Enter to continue")
+
+run_PI(simulation_config_dict)  # todo: uncomment (temporarily commented out)
+
+print("*** DEBUG: SIMULATION ENDED ***")
