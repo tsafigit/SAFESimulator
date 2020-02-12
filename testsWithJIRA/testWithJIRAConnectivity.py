@@ -28,13 +28,15 @@ class TestWithJIRAConnectivity(unittest.TestCase):
 
     small_train_params = {
         "Dev Team 1": {
-            "num_epics_per_PI" : 2,                 #Tsafi, 28 Jan 2020 2=>1
-            "num_stories_per_epic" : 3,             #Tsafi, 28 Jan 2020 3=>5
+            "num_epics_per_PI" : 2,
+            "num_stories_per_epic" : 3,
             "user_stories_board_id": 2,
-            "story_cycle_time": 3,                  #Tsafi, 28 Jan 2020 3=>2
-            "avg_velocity_num_of_stories": 5,      #Tsafi, 28 Jan 2020 changed from 5 to 10
+            "story_cycle_time": 3,
+            "avg_velocity_num_of_stories": 5,
             "wip_limit": 3,
             "prob_for_taking_stories_when_busy": 0, #Tsafi, 28 Jan 2020 changed from 0.5 to 0
+            "prob_for_ShS_delay": 0,  # Tsafi 12 Feb 2020
+            "avg_ShS_delay": 0,  # Tsafi 12 Feb 2020
             "team_members": ["Person1A", "Person1B", "Person1C"]
         }
     }
@@ -47,6 +49,8 @@ class TestWithJIRAConnectivity(unittest.TestCase):
             "avg_velocity_num_of_stories": 7,
             "wip_limit": 3,
             "prob_for_taking_stories_when_busy": 0.5,
+            "prob_for_ShS_delay": 0,  # Tsafi 12 Feb 2020
+            "avg_ShS_delay": 0,  # Tsafi 12 Feb 2020
             "team_members": ["Person1A", "Person1B", "Person1C"]
         },
         "Dev Team 2": {
@@ -56,6 +60,8 @@ class TestWithJIRAConnectivity(unittest.TestCase):
             "avg_velocity_num_of_stories": 10,
             "wip_limit": 3,
             "prob_for_taking_stories_when_busy": 0.5,
+            "prob_for_ShS_delay": 0,  # Tsafi 12 Feb 2020
+            "avg_ShS_delay": 0,  # Tsafi 12 Feb 2020
             "team_members": ["Person2A", "Person2B", "Person2C", "Person2D", "Person2E"]
         },
         "Dev Team 3": {
@@ -65,6 +71,8 @@ class TestWithJIRAConnectivity(unittest.TestCase):
             "avg_velocity_num_of_stories": 5,
             "wip_limit": 3,
             "prob_for_taking_stories_when_busy": 0.5,
+            "prob_for_ShS_delay": 0,  # Tsafi 12 Feb 2020
+            "avg_ShS_delay": 0,  # Tsafi 12 Feb 2020
             "team_members": ["Person3A", "Person3B", "Person3C"]
         }
     }

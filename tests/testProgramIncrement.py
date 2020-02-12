@@ -50,6 +50,8 @@ class TestProgramIncrement(unittest.TestCase):
             "avg_velocity_num_of_stories": 20,
             "wip_limit": 3,
             "prob_for_taking_stories_when_busy": 0.5,
+            "prob_for_ShS_delay": 0,  # Tsafi 12 Feb 2020
+            "avg_ShS_delay": 0,  # Tsafi 12 Feb 2020
             "team_members": ["Person1A", "Person1B", "Person1C"]
         }
     }
@@ -62,6 +64,8 @@ class TestProgramIncrement(unittest.TestCase):
             "avg_velocity_num_of_stories": 15,
             "wip_limit": 3,
             "prob_for_taking_stories_when_busy": 0.5,
+            "prob_for_ShS_delay": 0,  # Tsafi 12 Feb 2020
+            "avg_ShS_delay": 0,  # Tsafi 12 Feb 2020
             "team_members": ["Person1A", "Person1B", "Person1C"]
         },
         "Dev Team 2": {
@@ -71,6 +75,8 @@ class TestProgramIncrement(unittest.TestCase):
             "avg_velocity_num_of_stories": 20,
             "wip_limit": 3,
             "prob_for_taking_stories_when_busy": 0.5,
+            "prob_for_ShS_delay": 0,  # Tsafi 12 Feb 2020
+            "avg_ShS_delay": 0,  # Tsafi 12 Feb 2020
             "team_members": ["Person2A", "Person2B", "Person2C", "Person2D", "Person2E"]
         },
         "Dev Team 3": {
@@ -80,6 +86,8 @@ class TestProgramIncrement(unittest.TestCase):
             "avg_velocity_num_of_stories": 10,
             "wip_limit": 3,
             "prob_for_taking_stories_when_busy": 0.5,
+            "prob_for_ShS_delay": 0,  # Tsafi 12 Feb 2020
+            "avg_ShS_delay": 0,  # Tsafi 12 Feb 2020
             "team_members": ["Person3A", "Person3B", "Person3C"]
         }
     }

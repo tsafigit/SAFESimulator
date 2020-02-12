@@ -4,12 +4,7 @@ import sys
 from Simulator.ProgramIncrement import ProgramIncrement
 from Simulator.JIRAUtilities import JIRAUtilities
 
-from Constants import MIN_NUM_TEAMS, MAX_MUN_TEAMS, MIN_NUM_SPRINTS, MAX_NUM_SPRINTS, \
-    DEFAULT_AVG_VELOCITY_NUM_OF_STORIES, DEFAULT_NUM_EPICS_PER_PI, \
-    DEFAULT_NUM_STORIES_PER_EPIC, DEFAULT_PROB_FOR_TAKING_STORIES_WHEN_BUSY,\
-    DEFAULT_STORY_CYCLE_TIME, DEFAULT_TEAM_SIZE, DEFAULT_WIP_LIMIT, DEFAULT_SPRINT_SIZE, \
-    DEFAULT_NUM_SPRINTS, DEFAULT_NUM_TEAMS, JIRA_INST, DEFAULT_PATH_FOR_SAVED_PARAMS
-
+from Constants import *
 
 
 def summarize_one_sprint_one_team(team_sprint):
@@ -89,7 +84,7 @@ def get_simulation_params_from_user():
 
     simulation_config_dict = {}
     print("Enter number of teams between %d and %d (default is %d): "
-          %(MIN_NUM_TEAMS, MAX_MUN_TEAMS, DEFAULT_NUM_TEAMS))
+          % (MIN_NUM_TEAMS, MAX_MUN_TEAMS, DEFAULT_NUM_TEAMS))
     num_teams = int(input() or DEFAULT_NUM_TEAMS)       # ToDo: validate user input
 
     print("Enter number of sprints between %d and %d (default is %d): "
@@ -139,6 +134,13 @@ def get_simulation_params_from_user():
         print("Enter prob_for_taking_stories_when_busy (default is %f): " % DEFAULT_PROB_FOR_TAKING_STORIES_WHEN_BUSY)
         prob_for_taking_stories_when_busy = float(input() or DEFAULT_PROB_FOR_TAKING_STORIES_WHEN_BUSY)
 
+        # Tsafi 12 Feb 2020 - get following two new params: prob_for_ShS_delay, and avg_ShS_delay
+        print("Enter prob_for_ShS_delay (default is %f): " % DEFAULT_PROB_FOR_SHS_DELAY)
+        prob_for_ShS_delay = float(input() or DEFAULT_PROB_FOR_SHS_DELAY)
+
+        print("Enter avg_ShS_delay (default is %d): " % DEFAULT_AVG_SHS_DELAY)
+        avg_ShS_delay = float(input() or DEFAULT_AVG_SHS_DELAY)
+
         print("Enter team_size (default is %d): " % DEFAULT_TEAM_SIZE)
         team_size = int(input() or DEFAULT_TEAM_SIZE)
         #print("*** DEBUG: team size is: ", team_size)
@@ -156,6 +158,8 @@ def get_simulation_params_from_user():
             "avg_velocity_num_of_stories": avg_velocity_num_of_stories,
             "wip_limit": wip_limit,
             "prob_for_taking_stories_when_busy": prob_for_taking_stories_when_busy,
+            "prob_for_ShS_delay": prob_for_ShS_delay,  # Tsafi 12 Feb 2020
+            "avg_ShS_delay": avg_ShS_delay,  # Tsafi 12 Feb 2020
             "team_members": team_members
         }
         simulation_config_dict['train_params'] = train_params

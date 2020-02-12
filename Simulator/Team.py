@@ -12,6 +12,8 @@ class Team:
         self.avg_velocity_num_of_stories = params["avg_velocity_num_of_stories"]
         self.wip_limit = params["wip_limit"]
         self.prob_for_taking_stories_when_busy = params["prob_for_taking_stories_when_busy"]
+        self.prob_for_ShS_delay = params["prob_for_ShS_delay"]
+        self.avg_ShS_delay = params["avg_ShS_delay"]
 
 
         self.team_members = []
@@ -27,7 +29,7 @@ class Team:
 
     def initialize_backlog(self):
         backlog_generator = BacklogGenerator(self.name) #prefix for issue names
-        backlog_generator.generate_hierarchy(self.num_epics_per_PI, self.num_stories_per_epic)
+        backlog_generator.generate_hierarchy(self.num_epics_per_PI, self.num_stories_per_epic, self.prob_for_ShS_delay, self.avg_ShS_delay)
 
         self.epic_backlog = backlog_generator.epic_backlog
         self.user_story_backlog = backlog_generator.user_story_backlog

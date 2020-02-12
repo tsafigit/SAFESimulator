@@ -1,6 +1,7 @@
 from Simulator.Epic import Epic
 from Simulator.UserStory import UserStory
 from Simulator.Backlog import Backlog
+import random  # Tsafi 12 Feb 2020
 
 class BacklogGenerator:
     def __init__(self, prefix):
@@ -26,13 +27,24 @@ class BacklogGenerator:
             for story in epic.list_of_stories:
                 self.user_story_backlog.add_issue(story)
 
-    def generate_hierarchy(self, epics_num, user_stories_per_epic):
+    def generate_hierarchy(self, epics_num, user_stories_per_epic, prob_for_ShS_delay, avg_ShS_delay):
         for e in range(epics_num):
             curr_epic = Epic(self.create_epic_name(e+1))
             self.epic_backlog.add_issue(curr_epic)
 
             for s in range(user_stories_per_epic):
                 curr_story = UserStory(self.create_user_story_name(s+1, curr_epic), curr_epic)
+
+                # Tsafi 12 Feb 2020: random decision if should add delay:
+                should_add_wait = False
+                if prob_for_ShS_delay > 0 and avg_ShS_delay > 0:
+                    if random.randrange(100) <= (prob_for_ShS_delay*100):
+                        should_add_wait = True
+
+                # Tsafi 12 Feb 2020: if needed - add the delay
+                if should_add_wait:
+                    curr_story.wait += avg_ShS_delay
+
                 curr_epic.add_story(curr_story)
 
         self.prioritize_user_stories()

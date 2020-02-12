@@ -23,6 +23,8 @@ class TestTeamSprint(unittest.TestCase):
         "avg_velocity_num_of_stories" : 20,
         "wip_limit" : 3,
         "prob_for_taking_stories_when_busy" : 0.5,
+        "prob_for_ShS_delay": 0,  # Tsafi 12 Feb 2020
+        "avg_ShS_delay": 0,  # Tsafi 12 Feb 2020
         "team_members" : ["PersonA", "PersonB", "PersonC", "PersonD", "PersonE"]
     }
 
